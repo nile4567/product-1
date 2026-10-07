@@ -1,0 +1,6 @@
+{
+  "name": "PizzaRadar - Best Pizza & Live Distance Tracker",
+  "description": "Discover top-rated pizza shops in your area with live GPS distance tracking, real-time route estimates, reviews, and interactive maps.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
