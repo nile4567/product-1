@@ -5,6 +5,7 @@ import {
   InfoWindow,
   useMap,
   useMapsLibrary,
+  useApiIsLoaded,
 } from '@vis.gl/react-google-maps';
 import { PizzaShop, UserLocation } from '../types/pizza';
 import {
@@ -17,8 +18,10 @@ import {
   ArrowRight,
   Footprints,
   Car,
+  WifiOff,
 } from 'lucide-react';
 import { formatDistance, formatDuration } from '../utils/distance';
+import { useOnlineStatus } from '../hooks/useOnlineStatus';
 
 interface PizzaMapProps {
   shops: PizzaShop[];
@@ -49,6 +52,8 @@ export function PizzaMap({
 }: PizzaMapProps) {
   const map = useMap();
   const routesLib = useMapsLibrary('routes');
+  const isApiLoaded = useApiIsLoaded();
+  const isOnline = useOnlineStatus();
   const polylinesRef = useRef<google.maps.Polyline[]>([]);
   const [routeInfo, setRouteInfo] = useState<{
     distanceMeters: number;
@@ -177,6 +182,63 @@ export function PizzaMap({
       polylinesRef.current = [];
     };
   }, [map, routesLib, activeRouteShop, selectedShop, userLocation.lat, userLocation.lng]);
+
+  if (!isApiLoaded) {
+    return (
+      <div className="relative w-full h-full min-h-[420px] bg-stone-950 overflow-hidden flex flex-col items-center justify-center p-6 text-stone-200">
+        <div className="max-w-md w-full bg-stone-900 border border-stone-800 rounded-2xl p-6 shadow-2xl text-center space-y-4">
+          <div className="w-12 h-12 mx-auto rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+            <WifiOff className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white font-display">
+              {!isOnline ? 'Offline Map Mode' : 'Connecting to Map Network...'}
+            </h3>
+            <p className="text-xs text-stone-400 mt-1 leading-relaxed">
+              {!isOnline
+                ? 'Network map tiles are offline, but all your previously cached pizza shops, ratings, user reviews, and GPS coordinates remain fully accessible.'
+                : 'Initializing Google Maps Platform SDK and vector tiles...'}
+            </p>
+          </div>
+
+          <div className="bg-stone-950 border border-stone-800 rounded-xl p-3.5 text-left space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-stone-400">Cached Pizzerias:</span>
+              <span className="font-mono font-bold text-emerald-400">{shops.length} cached locally</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-stone-400">Current GPS Fix:</span>
+              <span className="font-mono text-orange-400 text-[11px] tabular-nums">
+                {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
+              </span>
+            </div>
+            {selectedShop && (
+              <div className="pt-2 border-t border-stone-800 text-xs">
+                <span className="text-stone-400 block mb-1">Active Target:</span>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-white truncate">{selectedShop.name}</span>
+                  <span className="font-mono text-orange-400 font-bold tabular-nums">
+                    {formatDistance(selectedShop.distanceMeters, distanceUnit)}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {selectedShop && (
+            <div className="flex items-center justify-center pt-1">
+              <button
+                onClick={() => onOpenDetails(selectedShop)}
+                className="w-full py-2 text-xs font-semibold bg-orange-600 hover:bg-orange-500 text-white rounded-lg transition-colors cursor-pointer"
+              >
+                Open Cached Shop Details & Reviews
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-full min-h-[420px] bg-stone-950 overflow-hidden">

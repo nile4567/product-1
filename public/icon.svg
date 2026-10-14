@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+    <linearGradient id="crust" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fed7aa"/>
+      <stop offset="100%" stop-color="#fdba74"/>
+    </linearGradient>
+    <linearGradient id="cheese" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#fde047"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with rounded squircle -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  
+  <!-- Radar pulse ring -->
+  <circle cx="256" cy="270" r="180" fill="none" stroke="#ffedd5" stroke-width="6" opacity="0.25" stroke-dasharray="12 8"/>
+  <circle cx="256" cy="270" r="130" fill="none" stroke="#ffedd5" stroke-width="8" opacity="0.35"/>
+  
+  <!-- Pizza Slice -->
+  <!-- Crust Top -->
+  <path d="M 120 160 Q 256 120 392 160 L 372 205 Q 256 175 140 205 Z" fill="url(#crust)"/>
+  <!-- Cheese Body -->
+  <path d="M 140 205 Q 256 175 372 205 L 256 410 Z" fill="url(#cheese)"/>
+  
+  <!-- Sauce Accents -->
+  <path d="M 180 220 Q 200 240 185 260" stroke="#dc2626" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M 320 230 Q 300 255 315 275" stroke="#dc2626" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <circle cx="256" cy="245" r="14" fill="#dc2626"/>
+
+  <!-- Pepperoni slices -->
+  <circle cx="210" cy="280" r="22" fill="#b91c1c" stroke="#991b1b" stroke-width="3"/>
+  <circle cx="285" cy="295" r="20" fill="#b91c1c" stroke="#991b1b" stroke-width="3"/>
+  <circle cx="245" cy="345" r="16" fill="#b91c1c" stroke="#991b1b" stroke-width="3"/>
+
+  <!-- Basil leaves -->
+  <path d="M 230 220 Q 245 205 255 220 Q 240 235 230 220 Z" fill="#15803d"/>
+  <path d="M 290 240 Q 305 228 315 240 Q 300 252 290 240 Z" fill="#15803d"/>
+</svg>

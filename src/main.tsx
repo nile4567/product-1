@@ -12,7 +12,16 @@ console.error = (...args: unknown[]) => {
 };
 
 import {createRoot} from 'react-dom/client';
+import { registerSW } from 'virtual:pwa-register';
 import App from './App.tsx';
 import './index.css';
+
+// Automatically register the service worker for offline precaching
+registerSW({
+  immediate: true,
+  onOfflineReady() {
+    console.log('[PizzaRadar] Offline caching active and ready.');
+  },
+});
 
 createRoot(document.getElementById('root')!).render(<App />);

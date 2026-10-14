@@ -13,9 +13,11 @@ import {
   MessageSquarePlus,
   Send,
   Sparkles,
+  Database,
 } from 'lucide-react';
 import { PizzaShop, PizzaReview } from '../types/pizza';
 import { formatDistance, formatDuration, calculateWeightedScore } from '../utils/distance';
+import { useOnlineStatus } from '../hooks/useOnlineStatus';
 
 interface ShopDetailsModalProps {
   shop: PizzaShop;
@@ -392,22 +394,28 @@ export function ShopDetailsModal({
                   ></textarea>
                 </div>
 
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowReviewForm(false)}
-                    className="px-3 py-1.5 text-xs text-stone-400 hover:text-white"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-4 py-1.5 text-xs font-semibold bg-orange-600 hover:bg-orange-500 text-white rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Publish Review</span>
-                  </button>
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                  <div className="flex items-center gap-1.5 text-[11px] text-stone-400">
+                    <Database className="w-3.5 h-3.5 text-orange-400" />
+                    <span>Saved locally & available offline</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowReviewForm(false)}
+                      className="px-3 py-1.5 text-xs text-stone-400 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="px-4 py-1.5 text-xs font-semibold bg-orange-600 hover:bg-orange-500 text-white rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Publish Review</span>
+                    </button>
+                  </div>
                 </div>
               </form>
             )}

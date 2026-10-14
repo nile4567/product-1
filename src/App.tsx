@@ -11,17 +11,26 @@ import {
   estimateDuration,
   calculateWeightedScore,
 } from './utils/distance';
+import {
+  loadCachedShops,
+  persistShops,
+  saveReviewForShop,
+  persistLocation,
+} from './services/storageService';
 import { useRealTimeLocation } from './hooks/useRealTimeLocation';
+import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { TopBar } from './components/TopBar';
 import { PizzaList } from './components/PizzaList';
 import { PizzaMap } from './components/PizzaMap';
 import { ShopDetailsModal } from './components/ShopDetailsModal';
 import { QuotaBanner } from './components/QuotaBanner';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { Map as MapIcon, List as ListIcon, Compass } from 'lucide-react';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 export default function App() {
+  const isOnline = useOnlineStatus();
   const {
     userLocation,
     isTracking,
@@ -35,11 +44,23 @@ export default function App() {
   } = useRealTimeLocation();
 
   const [currentPresetName, setCurrentPresetName] = useState<string>('Current GPS');
-  const [allShops, setAllShops] = useState<PizzaShop[]>(INITIAL_PIZZA_SHOPS);
+  const [allShops, setAllShops] = useState<PizzaShop[]>(() => {
+    return loadCachedShops(INITIAL_PIZZA_SHOPS).shops;
+  });
   const [selectedShop, setSelectedShop] = useState<PizzaShop | null>(null);
   const [activeRouteShop, setActiveRouteShop] = useState<PizzaShop | null>(null);
   const [detailsShop, setDetailsShop] = useState<PizzaShop | null>(null);
   const [mobileTab, setMobileTab] = useState<'list' | 'map'>('list');
+
+  // Synchronize pizza shop cache whenever shops update
+  useEffect(() => {
+    persistShops(allShops);
+  }, [allShops]);
+
+  // Synchronize last known location
+  useEffect(() => {
+    persistLocation(userLocation);
+  }, [userLocation]);
 
   const [filters, setFilters] = useState<FilterState>({
     searchQuery: '',
@@ -193,24 +214,30 @@ export default function App() {
     setMobileTab('map');
   }, []);
 
-  // Handle adding user review
-  const handleAddReview = useCallback((shopId: string, review: PizzaReview) => {
-    setAllShops((prev) =>
-      prev.map((shop) => {
-        if (shop.id !== shopId) return shop;
-        const updatedReviews = [review, ...shop.userReviews];
-        const newRating =
-          (shop.rating * shop.userRatingCount + review.rating) /
-          (shop.userRatingCount + 1);
-        return {
-          ...shop,
-          rating: Math.round(newRating * 10) / 10,
-          userRatingCount: shop.userRatingCount + 1,
-          userReviews: updatedReviews,
-        };
-      })
-    );
-  }, []);
+  // Handle adding user review with offline persistence
+  const handleAddReview = useCallback(
+    (shopId: string, review: PizzaReview) => {
+      // Persist to local storage immediately
+      saveReviewForShop(shopId, review, !isOnline);
+
+      setAllShops((prev) =>
+        prev.map((shop) => {
+          if (shop.id !== shopId) return shop;
+          const updatedReviews = [review, ...shop.userReviews];
+          const newRating =
+            (shop.rating * shop.userRatingCount + review.rating) /
+            (shop.userRatingCount + 1);
+          return {
+            ...shop,
+            rating: Math.round(newRating * 10) / 10,
+            userRatingCount: shop.userRatingCount + 1,
+            userReviews: updatedReviews,
+          };
+        })
+      );
+    },
+    [isOnline]
+  );
 
   // TopBar Nav clicks
   const handleNavClick = useCallback(
@@ -236,6 +263,11 @@ export default function App() {
       <div className="flex flex-col h-screen w-screen overflow-hidden bg-stone-900 text-stone-100">
         {/* GMP Quota Banner */}
         <QuotaBanner />
+
+        {/* Offline Connectivity & Cache Indicator */}
+        <OfflineIndicator
+          onManualRefresh={() => triggerNearbySearch(userLocation.lat, userLocation.lng)}
+        />
 
         {/* Top Bar Header Contract */}
         <TopBar

@@ -1,5 +1,7 @@
-import { Navigation, Compass } from 'lucide-react';
+import { Navigation, WifiOff } from 'lucide-react';
 import { LOCATION_PRESETS, LocationPreset } from '../services/pizzaService';
+import { PWAInstallButton } from './PWAInstallButton';
+import { useOnlineStatus } from '../hooks/useOnlineStatus';
 
 interface TopBarProps {
   isTracking: boolean;
@@ -18,6 +20,7 @@ export function TopBar({
   currentPresetName,
   onNavClick,
 }: TopBarProps) {
+  const isOnline = useOnlineStatus();
   return (
     <header className="flex items-center justify-between px-4 sm:px-6 py-3.5 bg-stone-900/95 backdrop-blur-md border-b border-stone-800 text-stone-100 z-40 sticky top-0">
       {/* Zone 1: Brand Wordmark (Single text element) */}
@@ -55,8 +58,21 @@ export function TopBar({
         </button>
       </nav>
 
-      {/* Zone 3: 1-2 Primary Actions (GPS Tracking toggle & City selector) */}
-      <div className="flex items-center gap-2.5">
+      {/* Zone 3: 1-2 Primary Actions (Install button, City selector, GPS Tracker) */}
+      <div className="flex items-center gap-2">
+        {/* Offline indicator badge if disconnected */}
+        {!isOnline && (
+          <div
+            title="Running in offline mode using cached local storage"
+            className="flex items-center gap-1 px-2 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-medium"
+          >
+            <WifiOff className="w-3 h-3 text-amber-400" />
+            <span className="hidden xl:inline">Offline</span>
+          </div>
+        )}
+
+        {/* PWA Install Button */}
+        <PWAInstallButton />
         {/* City preset dropdown */}
         <div className="relative inline-block text-left">
           <select
