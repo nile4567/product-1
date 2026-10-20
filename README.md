@@ -125,3 +125,6 @@ flowchart LR
 What am I still unsure about? What do I need to figure out or test first?
 How much does walking speed vary across users?
 Test: Measure whether a standard 3.1 mph (1.4 m/s) walking calculation feels accurate in dense pedestrian cities with traffic lights versus suburban sidewalks.
+
+link to the app
+https://ai.studio/apps/723a0e43-f979-460c-b407-e2a6c218e69a 
