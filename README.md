@@ -31,9 +31,13 @@ I need [X] because [Y].
 Five Whys:
 
 Why did I picked a place solely based on a high star count that was further away than I realized?
+
 Why do generic reviews lump together cheap fountain drinks, quick delivery speed, and tourist hype rather than dough fermentation, crust crispness, and sauce balance?
+
 Why does straight-line distance don't match real turn-by-turn travel time across busy city streets?
+
 Why cross-referencing food blogs, review boards, and transit directions while walking on the street requires juggling multiple screens?
+
 Why are food quality and physical proximity treated as separate decisions instead of a single immediate trade-off?
 
 Problem statement:
